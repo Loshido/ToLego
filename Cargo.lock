@@ -8,6 +8,7 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "image",
+ "loading",
  "oxipng",
 ]
 
@@ -626,6 +627,12 @@ name = "linux-raw-sys"
 version = "0.4.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "78b3ae25bc7c8c38cec158d1f2757ee79e9b3740fbc7ccf0e59e4b08d793fa89"
+
+[[package]]
+name = "loading"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "676420b03272176423578148eee61319e893422694f6d96a394841cb0901357f"
 
 [[package]]
 name = "lock_api"

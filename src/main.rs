@@ -2,6 +2,7 @@ use image::{imageops::FilterType, io::Reader as ImageReader, GenericImageView, I
 use std::{fs, path::Path};
 use clap::Parser;
 use oxipng::{optimize, Options, OutFile};
+use loading::Loading;
 
 fn legofy(file: &Path, brick_size: u32) {
     let img = ImageReader::open(file)
@@ -26,6 +27,8 @@ fn legofy(file: &Path, brick_size: u32) {
             .resize(brick_size, brick_size, FilterType::Triangle)
     };
 
+    let loading = Loading::default();
+    loading.text("Computes the average color of each brick");
     // loop through each brick
     // 8.div_euclid(3) == 2 <=> // in python
     for i in 0 .. width.div_euclid(brick_size) {
@@ -83,6 +86,8 @@ fn legofy(file: &Path, brick_size: u32) {
             }
         }
     }
+    loading.success("Computation succeed");
+    loading.text("Legofies the image");
     // recovering the filename
     let filename = file.file_stem().unwrap();
     // in the right format
@@ -90,11 +95,16 @@ fn legofy(file: &Path, brick_size: u32) {
     // path to the default legofy output
     let path = format!("{}.lego", filename_str);
     match lego.save_with_format(&path, ImageFormat::Png) {
-        Ok(_) => println!("Legofication successfully!"),
-        Err(err) => eprintln!("Legofication failed: {}", err)
+        Ok(_) => loading.success("Legofication succeed"),
+        Err(err) => {
+            loading.fail("Legofication failed");
+            loading.end();
+            panic!("{}", err);
+        }
     };
     
     // optimizing the output
+    loading.text("Optimizes the lego file");
     let optimized_filename = format!("{}.lego.png", filename_str);
     let output_path = Path::new(&optimized_filename);
     let output = OutFile::from_path(output_path.to_path_buf());
@@ -104,13 +114,16 @@ fn legofy(file: &Path, brick_size: u32) {
     let unoptimized_path = path.clone();
     match optimize(&path.into(), &output, &options) {
         Ok(_) => {
-            println!("Optimization successful!");
+            loading.success("Optimization succeed!");
+            loading.end();
             fs::remove_file(unoptimized_path).unwrap();
         },
         Err(err) => {
-            eprintln!("Optimization failed: {}", err);
-
+            loading.fail("Optimization failed");
+            loading.end();
+            
             fs::rename(unoptimized_path, optimized_filename).unwrap();
+            panic!("{}", err);
         },
     }
 }
