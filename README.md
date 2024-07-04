@@ -2,6 +2,7 @@
 A simplistic cli tool that transforms your pictures into lego brick pictures made with rust using the [image](https://crates.io/crates/image) lib.
 
 ![Default vs bricked](demo.png)
+![Default vs bricked](demo2.png)
 
 # Steps
 
