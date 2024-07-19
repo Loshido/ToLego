@@ -106,8 +106,11 @@ fn legofy(file: &Path, brick_size: u32) {
     // optimizing the output
     loading.text("Optimizes the lego file");
     let optimized_filename = format!("{}.lego.png", filename_str);
-    let output_path = Path::new(&optimized_filename);
-    let output = OutFile::from_path(output_path.to_path_buf());
+    // combine the absolute path and the filename 
+
+    let output_path = file.parent().unwrap().join(&optimized_filename);
+    //let output_path = Path::new(&optimized_filename);
+    let output = OutFile::from_path(output_path);
     let options = Options::default();
 
     // Optimize the image
